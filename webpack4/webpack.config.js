@@ -1,7 +1,6 @@
 module.exports = {
     entry:{
-        main:"./src/index.js",
-        main_2:"./src/index_2.js"
+        mainNoRunTime:"./src/index.js"
     },
     optimization: {
         splitChunks: {
@@ -18,13 +17,12 @@ module.exports = {
             cacheGroups: {  //缓存组可以继承和/或覆盖splitChunk中的任何选项
                 vendors: {
                     test:/[\\/]node_modules[\\/]/,
-                    priority: -1,
-                    minChunks: 3,
-                    name:'asd'
+                    priority: -5,
+                    minChunks: 1
                 },
                 vendors_2: {
                     test:/[\\/]node_modules[\\/]/,
-                    priority: -5,
+                    priority: -8,
                     minChunks: 2,
                     name:'name2'
                 },
@@ -34,14 +32,12 @@ module.exports = {
                     reuseExistingChunk: true
                 }
             }
+        },
+        runtimeChunk: {
+          name: entrypoint => `runtimechunk~${entrypoint.name}`
         }
-        // runtimeChunk: {
-        //   name: entrypoint => `runtimechunk~${entrypoint.name}`
-        // }
     }
 }
-
-//runtimechunk splitechunk 到底各个配置是啥意思
 
 
 
@@ -51,4 +47,11 @@ module.exports = {
  * 缓存组的配置可以覆盖上面splitChunks的配置,但是需要符合test规则；如果一个chunk符合多个test规则也可以指向多个缓存组，即继承多个缓存组的规则
  * 如果 指向了多个缓存组，并且缓存组的配置存在不一致（如name不一样），则以优先级高的为准；但即便都匹配，终究以命中缓存的缓存组为准（比如某个缓存组虽然test规则正确，优先级也更高，但因为minChunks设置太大而没有命中缓存，则这个缓存组的其余规则也没用）
  * maxAsyncRequests,maxInitialRequests,reuseExistingChunk需要实际项目来进行验证，还不太明白
+ */
+
+
+ /**
+ * runtimechunk配置
+ * 通过设置 optimization.runtimeChunk: true 来为每一个入口默认添加一个只包含 runtime 的 chunk
+ * 自动计算构建一些基础的chunk信息，类似之前版本中的mainifest信息获取方式
  */
